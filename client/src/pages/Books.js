@@ -15,7 +15,16 @@ useEffect(() => {
     }
   }
   fetchAllBooks()
-}, [])
+}, []);
+
+const handleDelete = async (id) => {
+  try{
+    await axios.delete("http://localhost:3001/books/"+id)
+    window.location.reload();
+  }catch(err){
+    console.log(err);
+  }
+}
 
   return (
     <div>
@@ -23,12 +32,14 @@ useEffect(() => {
       <div className='books'>
         {books.map(book => (
           < div className='book' key = {book.id}>
-          {book.cover_image && <img src={book.cover_image} alt="" />}
+            <img src={book.cover_image} alt="" />
           <h2>{book.title}</h2>
             <p>{book.author}</p>
             <p>{book.publisher}</p>
             <p>{book.publication_year}</p>
             <p>{book.isbn}</p>
+            <button className='delete' onClick={() => handleDelete(book.id)}>Delete</button>
+            <button className='update'><Link to={`/update/${book.id}`}>Update</Link></button>
           </div>
         ))}
       </div>
