@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React from 'react'
 import { useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 
 const Add = () => {
@@ -11,24 +11,47 @@ const Add = () => {
     publisher: "",
     publication_year: "",
     isbn: "",
-    cover_image: "",
+    cover_image: null,
   })
 
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setBook(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value, files } = e.target;
+    if (name === 'cover_image') {
+      setBook(prev => ({ ...prev, cover_image: files[0] }));
+    } else {
+      setBook(prev => ({ ...prev, [name]: value }));
+    }
   }
+
 
   const handleClick = async e => {
     e.preventDefault()
-    try {
-      await axios.post("http://localhost:3001/books", book)
-      Navigate("/")
-    } catch (err) {
+    const formData = new FormData();
+    Object.keys(book).forEach(key => {
+      formData.append(key, book[key]);
+    });
 
+    // Debugging the FormData content
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/books", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('Server response:', response.data);
+      navigate("/");
+    } catch (err) {
+      console.error('axiox error:', err);
     }
   }
+
+
 
   return (
     <div className='form'>
@@ -71,7 +94,6 @@ const Add = () => {
 
       <input
         type="file"
-        placeholder='cover_image'
         onChange={handleChange}
         name='cover_image'
       />
@@ -82,4 +104,4 @@ const Add = () => {
   )
 }
 
-export default Add
+export default Add;

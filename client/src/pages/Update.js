@@ -32,7 +32,7 @@ const Update = () => {
 
     try {
       console.log('Sending update request for book:', book);
-      await axios.put(`http://localhost:3001/books/${bookId}` , book)
+      await axios.put(`http://localhost:5000/books/${bookId}` , book)
       Navigate("/")
     } catch (err) {
       console.error('Error during update request:', err);
