@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React from 'react'
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate,  } from 'react-router-dom'
 
 
 const Update = () => {
@@ -11,7 +11,7 @@ const Update = () => {
     publisher: "",
     publication_year: "",
     isbn: "",
-    cover_image: "",
+    cover_image: null,
   })
 
   const [error, setError] = useState(false)
@@ -24,19 +24,38 @@ const Update = () => {
   
 
   const handleChange = (e) => {
-    setBook((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value, files } = e.target;
+    if (name === 'cover_image') {
+      setBook(prev => ({ ...prev, cover_image: files[0] }));
+    } else{
+
+    setBook((prev) => ({ ...prev, [name]:value }));
+    }
   }
 
   const handleClick = async (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    Object.keys(book).forEach(key => {
+      formData.append(key, book[key]);
+    });
+
+    // Debugging the FormData content
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+    
     try {
-      console.log('Sending update request for book:', book);
-      await axios.put(`http://localhost:5000/books/${bookId}` , book)
-      Navigate("/")
+      const response = await axios.put(`http://localhost:5000/books/${bookId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('Server response:', response.data);
+      Navigate("/");
     } catch (err) {
-      console.error('Error during update request:', err);
-      setError(true)
+      console.error('axiox error:', err);
     }
   }
 
@@ -80,8 +99,7 @@ const Update = () => {
       />
 
       <input
-        type="text"
-        placeholder='cover_image'
+        type="file"
         onChange={handleChange}
         name='cover_image'
       />

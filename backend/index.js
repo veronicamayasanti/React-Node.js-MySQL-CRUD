@@ -3,11 +3,12 @@ import mysql from 'mysql2';
 import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
-
-
-
-
+import { fileURLToPath } from 'url';
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use( express.json())
 app.use(cors());
 app.use(express.urlencoded({extended: true}));
@@ -30,7 +31,7 @@ db.connect((err) => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './public/img');
+        cb(null, './uploads');
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname)); // Menyimpan file dengan nama unik
@@ -39,7 +40,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage}); 
 
-// app.use('/public/img', express.static(path.join(__dirname, 'upload' )))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.get("/", (req, res) => {
@@ -47,19 +48,21 @@ app.get("/", (req, res) => {
 })
 
 app.get("/books", (req, res) => {
-    const sql = "SELECT * FROM books"
+    const sql = "SELECT * FROM books";
     db.query(sql, (err, data) => {
-        console.info(data);
-        if(err) return res.json(err)
+        if (err) {
+            console.error('SQL error:', err);
+            return res.status(500).json(err);
+        }
         return res.json(data);
-    })
-})
+    });
+});
 
 
 app.post("/books", upload.single('cover_image'), (req, res) => {
     const { title, author, publisher, publication_year, isbn } = req.body; 
-    // const cover_image = req.file ? `/public/img/${req.file.filename}` : null;
-    const cover_image = req.file ? req.file.filename : null;
+    const cover_image = req.file ? `${req.file.filename}` : null;
+    
 
     console.log('Received data:', { title, author, publisher, publication_year, isbn, cover_image });
 
@@ -85,35 +88,21 @@ app.delete("/books/:id", (req, res) => {
     })
 })
 
-app.put("/books/:id", (req, res) => {
-    const title = req.body.title;
-    const author = req.body.author;
-    const publisher = req.body.publisher;
-    const publication_year = req.body.publication_year;
-    const isbn = req.body.isbn;
-    const cover_image = req.body.cover_image;
+app.put('/books/:id', upload.single('cover_image'), (req, res) => {
+    const { id } = req.params;
+    const { title, author, publisher, publication_year, isbn } = req.body;
+    let cover_image = req.file ? `${req.file.filename}` : req.body.cover_image;
 
-    const bookId = req.params.id;
-    const sql = "UPDATE books SET `title` = ?, `author` = ?, `publisher` = ?, `publication_year` = ?, `isbn` = ?, `cover_image` = ? WHERE id = ?";
+    const sql = "UPDATE books SET title = ?, author = ?, publisher = ?, publication_year = ?, isbn = ?, cover_image = ? WHERE id = ?";
+    const values = [title, author, publisher, publication_year, isbn, cover_image, id];
 
-    const VALUES = [
-        title, 
-        author, 
-        publisher, 
-        publication_year, 
-        isbn, 
-        cover_image
-    ];
-
-    db.query(sql, [...VALUES, bookId] ,(err, data) => {
+    db.query(sql, values, (err, result) => {
         if (err) {
-            console.error('error executing query: ', err)
-         return res.json(err);
+            return res.status(500).json(err);
         }
-        console.log('query successful, data ', data);   
-        return res.json(data)
-    })
-})
+        return res.status(200).json({ message: 'Book updated successfully', result });
+    });
+});
 
 app.listen(5000, () => {
     console.log(`Connected to backend http://localhost:5000`);

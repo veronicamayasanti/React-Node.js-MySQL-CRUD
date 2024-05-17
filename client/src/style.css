@@ -1,67 +1,144 @@
 .App {
   height: 100vh;
-  padding: 0px 100px;
+  padding: 0 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  background-color: #f9f9f9;
 }
 
 .books {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .book {
-  flex: 1;
+  flex: 1 0 200px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
+  padding: 15px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-img {
+.book:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.book img {
   width: 200px;
   height: 300px;
   object-fit: cover;
-  background-color: aquamarine;
+  border-radius: 8px;
+  background-color: #e0f7fa;
+  transition: opacity 0.3s;
+}
+
+.book img:hover {
+  opacity: 0.8;
+}
+
+.book h2 {
+  font-size: 1.2em;
+  color: #333;
+  margin: 10px 0;
+}
+
+.book p {
+  color: #666;
+  margin: 5px 0;
+}
+
+.delete, .update {
+  border: none;
+  padding: 5px 10px;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .delete {
-  border: none;
-  padding: 3px 6px;
-  background-color: white;
-  cursor: pointer;
-  border: palevioletred;
-  color: rgb(255, 0, 0);
+  color: red;
+}
+
+.delete:hover {
+  background-color: #ffe6e6;
 }
 
 .update {
-  border: none;
-  padding: 3px 6px;
-  background-color: white;
-  cursor: pointer;
-  border: palevioletred;
   color: blue;
 }
 
-.form{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.update:hover {
+  background-color: #e6e6ff;
 }
 
-input{
-    width: 250px;
-    padding: 10px;
-    border: 1px solid gray;
+.update a {
+  text-decoration: none;
+  color: inherit;
 }
 
-.formButton{
-    border: none;
-    padding: 10px;
-    background-color: lightsalmon;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input {
+  width: 250px;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+.formButton {
+  border: none;
+  padding: 10px;
+  background-color: lightsalmon;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.formButton:hover {
+  background-color: #ff7f50;
+}
+
+.addNewButton {
+  border: none;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.addNewButton:hover {
+  background-color: #218838;
 }

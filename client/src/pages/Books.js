@@ -35,7 +35,7 @@ const handleDelete = async (id) => {
            
           (
             < div className='book' key={book.id}>
-              <img src={`C:/Users/veron/OneDrive/Documents/React-Node.js-MySQL-CRUD/backend/public/img/${book.cover_image}`} alt="" />
+              <img src={`http://localhost:5000/uploads/${book.cover_image}`} alt={book.title} />
               <h2>{book.title}</h2>
               <p>{book.author}</p>
               <p>{book.publisher}</p>
@@ -49,8 +49,8 @@ const handleDelete = async (id) => {
           
         )}
       </div>
-      <button>
-        <Link to="/add">Add new book</Link>
+      <button className='addNewButton'>
+        <Link to="/add" style={{ color: 'inherit', textDecoration: 'none' }}>Add new book</Link>
       </button>
     </div>
   )
