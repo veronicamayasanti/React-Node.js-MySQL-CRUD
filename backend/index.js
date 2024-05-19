@@ -60,14 +60,14 @@ app.get("/books", (req, res) => {
 
 
 app.post("/books", upload.single('cover_image'), (req, res) => {
-    const { title, author, publisher, publication_year, isbn } = req.body; 
+    const { title, author, publisher, publication_year } = req.body; 
     const cover_image = req.file ? `${req.file.filename}` : null;
     
 
-    console.log('Received data:', { title, author, publisher, publication_year, isbn, cover_image });
+    console.log('Received data:', { title, author, publisher, publication_year, cover_image });
 
-    const sql = "INSERT INTO books (title, author, publisher, publication_year, isbn, cover_image) VALUES ?";
-    const VALUES = [[title, author, publisher, publication_year, isbn, cover_image ]];
+    const sql = "INSERT INTO books (title, author, publisher, publication_year, cover_image) VALUES ?";
+    const VALUES = [[title, author, publisher, publication_year, cover_image ]];
 
     db.query(sql, [VALUES], (err, data) => {
         if(err) {
@@ -90,11 +90,11 @@ app.delete("/books/:id", (req, res) => {
 
 app.put('/books/:id', upload.single('cover_image'), (req, res) => {
     const { id } = req.params;
-    const { title, author, publisher, publication_year, isbn } = req.body;
+    const { title, author, publisher, publication_year} = req.body;
     let cover_image = req.file ? `${req.file.filename}` : req.body.cover_image;
 
-    const sql = "UPDATE books SET title = ?, author = ?, publisher = ?, publication_year = ?, isbn = ?, cover_image = ? WHERE id = ?";
-    const values = [title, author, publisher, publication_year, isbn, cover_image, id];
+    const sql = "UPDATE books SET title = ?, author = ?, publisher = ?, publication_year = ?, cover_image = ? WHERE id = ?";
+    const values = [title, author, publisher, publication_year, cover_image, id];
 
     db.query(sql, values, (err, result) => {
         if (err) {

@@ -10,7 +10,7 @@ const Add = () => {
     author: "",
     publisher: "",
     publication_year: "",
-    isbn: "",
+    
     cover_image: null,
   })
 
@@ -85,12 +85,7 @@ const Add = () => {
         name='publication_year'
       />
 
-      <input
-        type="number"
-        placeholder='isbn'
-        onChange={handleChange}
-        name='isbn'
-      />
+    
 
       <input
         type="file"

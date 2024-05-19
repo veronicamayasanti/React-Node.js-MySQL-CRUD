@@ -10,7 +10,6 @@ const Update = () => {
     author: "",
     publisher: "",
     publication_year: "",
-    isbn: "",
     cover_image: null,
   })
 
@@ -89,13 +88,6 @@ const Update = () => {
         placeholder='publication_year'
         onChange={handleChange}
         name='publication_year'
-      />
-
-      <input
-        type="number"
-        placeholder='isbn'
-        onChange={handleChange}
-        name='isbn'
       />
 
       <input

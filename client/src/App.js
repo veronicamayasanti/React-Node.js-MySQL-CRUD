@@ -10,7 +10,7 @@ import "./style.css";
 
 function App() {
   return (
-    <div className="App">
+    <div className="container ">
       
       <BrowserRouter>
       <Routes>
@@ -19,8 +19,6 @@ function App() {
           <Route path="/update/:id" element={<Update />} />
       </Routes>
       </BrowserRouter>
-      
-
     </div>
   );
 }
