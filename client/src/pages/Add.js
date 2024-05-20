@@ -10,10 +10,11 @@ const Add = () => {
     author: "",
     publisher: "",
     publication_year: "",
-    
+
     cover_image: null,
   })
 
+  const [error, setError] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,15 +29,30 @@ const Add = () => {
 
   const handleClick = async e => {
     e.preventDefault()
+    const newError = {};
+    let isEmpty = false;
+
+    // check for empty fields
+    Object.keys(book).forEach(key => {
+      if (!book[key]) {
+        newError[key] = 'This field cannot ne empty';
+        isEmpty = true;
+      }
+    });
+
+    if (isEmpty) {
+      setError(newError);
+      alert('Please fill in all fields.');
+      return;
+    }
+
+
     const formData = new FormData();
     Object.keys(book).forEach(key => {
       formData.append(key, book[key]);
-    });
+    })
 
-    // Debugging the FormData content
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
+
 
     try {
       const response = await axios.post("http://localhost:5000/books", formData, {
@@ -54,47 +70,82 @@ const Add = () => {
 
 
   return (
-    <div className='form'>
-      <h1>Add New Book</h1>
-      <input
-        type="text"
-        placeholder='title'
-        onChange={handleChange}
-        name='title'
-
-      />
-
-      <input
-        type="text"
-        placeholder='author'
-        onChange={handleChange}
-        name='author'
-      />
-
-      <input
-        type="text"
-        placeholder='publisher'
-        onChange={handleChange}
-        name='publisher'
-      />
-
-      <input
-        type="number"
-        placeholder='publication_year'
-        onChange={handleChange}
-        name='publication_year'
-      />
-
-    
-
-      <input
-        type="file"
-        onChange={handleChange}
-        name='cover_image'
-      />
-
-      <button className='formButton' onClick={handleClick}>Add</button>
-
+    <div className="container mt-5">
+      <h1 className="mb-4">Add New Book</h1>
+      <form className="row g-3">
+        <div className="col-md-6">
+          <label htmlFor="title" className="form-label">Title</label>
+          <input
+            type="text"
+            className="form-control"
+            id="title"
+            placeholder="Title"
+            onChange={handleChange}
+            name="title"
+            value={book.title}
+          />
+        </div>
+        <div className="col-md-6">
+          <label htmlFor="author" className="form-label">Author</label>
+          <input
+            type="text"
+            className="form-control"
+            id="author"
+            placeholder="Author"
+            onChange={handleChange}
+            name="author"
+            value={book.author}
+          />
+        </div>
+        <div className="col-md-6">
+          <label htmlFor="publisher" className="form-label">Publisher</label>
+          <input
+            type="text"
+            className="form-control"
+            id="publisher"
+            placeholder="Publisher"
+            onChange={handleChange}
+            name="publisher"
+            value={book.publisher}
+          />
+        </div>
+        <div className="col-md-6">
+          <label htmlFor="publication_year" className="form-label">Publication Year</label>
+          <select
+            className="form-select"
+            id="publication_year"
+            aria-label="Publication Year"
+            name="publication_year"
+            value={book.publication_year}
+            onChange={handleChange}
+          >
+            <option value="2014">2014</option>
+            <option value="2015">2015</option>
+            <option value="2016">2016</option>
+            <option value="2017">2017</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+          </select>
+        </div>
+        <div className="col-md-6">
+          <label htmlFor="cover_image" className="form-label">Cover Image</label>
+          <input
+            type="file"
+            className="form-control"
+            id="cover_image"
+            onChange={handleChange}
+            name="cover_image"
+          />
+        </div>
+        <div className="col-12">
+          <button type="submit" className="btn btn-primary" onClick={handleClick}>Add</button>
+        </div>
+      </form>
     </div>
   )
 }

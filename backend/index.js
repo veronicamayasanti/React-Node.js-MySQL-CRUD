@@ -58,6 +58,22 @@ app.get("/books", (req, res) => {
     });
 });
 
+app.get('/books/:id', (req, res) => {
+    const bookId = req.params.id;
+    const sql = 'SELECT * FROM books WHERE id = ?';
+
+    db.query(sql, [bookId], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Server error');
+        }
+        if (result.length === 0) {
+            return res.status(404).send('Book not found');
+        }
+        res.json(result[0]);
+    });
+});
+
 
 app.post("/books", upload.single('cover_image'), (req, res) => {
     const { title, author, publisher, publication_year } = req.body; 
@@ -88,21 +104,34 @@ app.delete("/books/:id", (req, res) => {
     })
 })
 
+
+
 app.put('/books/:id', upload.single('cover_image'), (req, res) => {
-    const { id } = req.params;
-    const { title, author, publisher, publication_year} = req.body;
-    let cover_image = req.file ? `${req.file.filename}` : req.body.cover_image;
+    const bookId = req.params.id;
+    const { title, author, publisher, publication_year } = req.body;
+    const cover_image = req.file ? req.file.filename : req.body.cover_image;
 
-    const sql = "UPDATE books SET title = ?, author = ?, publisher = ?, publication_year = ?, cover_image = ? WHERE id = ?";
-    const values = [title, author, publisher, publication_year, cover_image, id];
+    let sql = 'UPDATE books SET ';
+    const fields = [];
 
-    db.query(sql, values, (err, result) => {
+    if (title) fields.push(`title = '${title}'`);
+    if (author) fields.push(`author = '${author}'`);
+    if (publisher) fields.push(`publisher = '${publisher}'`);
+    if (publication_year) fields.push(`publication_year = ${publication_year}`);
+    if (cover_image) fields.push(`cover_image = '${cover_image}'`);
+
+    sql += fields.join(', ');
+    sql += ` WHERE id = ${bookId}`;
+
+    db.query(sql, (err, result) => {
         if (err) {
-            return res.status(500).json(err);
+            console.error(err);
+            return res.status(500).send('Server error');
         }
-        return res.status(200).json({ message: 'Book updated successfully', result });
+        res.json(result);
     });
 });
+
 
 app.listen(5000, () => {
     console.log(`Connected to backend http://localhost:5000`);
